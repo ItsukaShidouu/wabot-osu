@@ -3,3 +3,4 @@ data/auth/
 .env
 .superpowers/
 dist/
+node_modules
