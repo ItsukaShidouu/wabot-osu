@@ -10,7 +10,7 @@ type KickFn = (groupJid: string, userJid: string) => Promise<void>
 
 type GroupUpdate = {
   id: string
-  participants: string[]
+  participants: Array<{ id: string }>
   action: string
 }
 
@@ -23,14 +23,15 @@ export async function handleGroupUpdate(
   if (update.action !== 'add') return
 
   for (const participant of update.participants) {
-    if (isVerified(participant)) continue
+    const jid = participant.id
+    if (isVerified(jid)) continue
 
-    startVerifyTimer(participant, update.id, kickFn, cfg.VERIFY_TIMEOUT_MS)
+    startVerifyTimer(jid, update.id, kickFn, cfg.VERIFY_TIMEOUT_MS)
 
-    const number = participant.split('@')[0]
+    const number = jid.split('@')[0]
     await sock.sendMessage(update.id, {
       text: `👋 Halo @${number}! Kirim username osu! kamu dalam 5 menit untuk verifikasi, atau kamu akan dikeluarkan dari grup.`,
-      mentions: [participant],
+      mentions: [jid],
     })
   }
 }
