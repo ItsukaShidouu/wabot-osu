@@ -75,4 +75,13 @@ describe('verify service', () => {
     expect(result.success).toBe(false)
     expect(result.reason).toMatch(/not pending/)
   })
+
+  it('attemptVerify returns api error when lookupOsuUser throws, timer still running', async () => {
+    mockLookup.mockRejectedValue(new Error('network error'))
+    startVerifyTimer('user@s.whatsapp.net', 'group@g.us', vi.fn(), 300000)
+    const result = await attemptVerify('user@s.whatsapp.net', 'peppy')
+    expect(result.success).toBe(false)
+    expect(result.reason).toMatch(/api error/)
+    expect(pendingMap.has('user@s.whatsapp.net')).toBe(true)
+  })
 })
