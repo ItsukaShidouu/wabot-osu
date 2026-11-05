@@ -1,0 +1,5 @@
+data/bot.db
+data/auth/
+.env
+.superpowers/
+dist/
